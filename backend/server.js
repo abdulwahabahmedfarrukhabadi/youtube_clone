@@ -185,7 +185,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to the YouTube Clone Backend API 🚀" });
+  res.status(404).json({ message: "API route found" });
 });
 
 // Start the server
