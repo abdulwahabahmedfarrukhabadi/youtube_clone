@@ -109,7 +109,7 @@ const VideoComments = ({ comment }) => {
       if (!commentId) return;
 
       try {
-        const API_KEY = "AIzaSyAvtJOFlN96i0YV0j3Ockmcd5jjXk659iw";
+        const API_KEY = import.meta.env.VITE_API_KEY;
         const response = await axios.get(
           `https://www.googleapis.com/youtube/v3/comments?part=snippet&parentId=${commentId}&key=${API_KEY}`
         );

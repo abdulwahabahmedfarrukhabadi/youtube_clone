@@ -8,7 +8,7 @@ export const fetchPlaylistDetails = async (playlistId) => {
         part: "snippet,contentDetails",
         maxResults: 20, // Number of videos to fetch
         playlistId: playlistId,
-        key: 'AIzaSyBzyo8LuRMLJ30b7k_HYvKwK8-eM0g5ImE', // Replace with your YouTube API Key
+        key: import.meta.env.VITE_API_KEY, // Replace with your YouTube API Key
       },
     });
 
