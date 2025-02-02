@@ -184,7 +184,9 @@ app.use((req, res, next) => {
   next();
 });
 
-
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to the YouTube Clone Backend API 🚀" });
+});
 
 // Start the server
 app.listen(PORT, () => {
