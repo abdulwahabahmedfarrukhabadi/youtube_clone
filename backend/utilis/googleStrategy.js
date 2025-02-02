@@ -28,17 +28,25 @@ exports.GoogleProvider = new GoogleStrategy(
            
       const youtubeData = await getYouTubeChannelData(accessToken);
       const subscriptions= await this.fetchSubscriptionStatus(accessToken);
-            
+      const watchHistory = await this.fetchWatchHistory(accessToken);      
       // Now, include youtube data in the profile (or you can store it separately in your DB)
       profile.accessToken = accessToken
       profile.youtubeData = youtubeData;
       profile.subscriptions = subscriptions;
       profile.refreshToken = refreshToken;
-     
+      profile.watchHistory = watchHistory;
+         
       
       // Return profile with YouTube channel info
       console.log("Profile Data:", profile);
-
+      function parseDuration(duration) {
+        const regex = /PT(\d+M)?(\d+S)?/;
+        const matches = duration.match(regex);
+        const minutes = matches[1] ? parseInt(matches[1], 10) : 0;
+        const seconds = matches[2] ? parseInt(matches[2], 10) : 0;
+        return (minutes * 60) + seconds;
+      }
+      
       const userData = {
         googleId: profile.id,
         userId: profile.id,
@@ -53,8 +61,8 @@ exports.GoogleProvider = new GoogleStrategy(
         },
         profilePicture: profile.photos[0].value || "",
         provider: profile.provider,
-        accessToken:accessToken,
-        refreshToken:refreshToken,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
         youtube: youtubeData
           ? {
               channel: {
@@ -90,7 +98,24 @@ exports.GoogleProvider = new GoogleStrategy(
                 : [],
             }
           : {},
+        watchHistory: (watchHistory && watchHistory.length > 0)
+          ? watchHistory.map(watchHistory => ({
+              videoId: watchHistory?.id || "", // Example video ID
+              videoTitle: watchHistory?.snippet?.title || "", // Example video title
+              videoDescription: watchHistory?.snippet?.description || "", // Example video description
+              thumbnailUrl: watchHistory?.snippet?.thumbnails?.high?.url || "", // Example thumbnail URL
+              channelId: watchHistory?.snippet?.channelId || "", // Example channel ID
+              channelTitle: watchHistory?.snippet?.channelTitle || "", // Example channel title
+              watchDate: watchHistory?.snippet?.publishedAt || "",
+              views: watchHistory?.statistics?.viewCount || 0,
+              duration: watchHistory?.contentDetails?.duration ? parseDuration(watchHistory.contentDetails.duration) : 0, // Parse duration
+              isWatched: true,
+            }))
+          : [],
       };
+
+      
+      
       
       
       // Now you can use `userData` to save it to the database
@@ -158,49 +183,54 @@ exports.getRefreshedToken = async (req, res) => {
   }
 };
 
-exports.fetchSubscriptionStatus =async(accessToken) => {
+exports.fetchSubscriptionStatus = async (accessToken) => {
   let allSubscriptions = [];
   let nextPageToken = "";
+  let maxSubscriptions = 50; // Limit to 200 subscriptions
+  console.log("Access Token is here", accessToken);
 
-  console.log("Access Token is here",accessToken)
   if (!accessToken) {
     console.error("No token found.");
     return { error: "Access token is required." };
   }
-  try{
-   response=await axios.get("https://www.googleapis.com/youtube/v3/subscriptions",{
-    params:{
-      part:"snippet,contentDetails",
-      mine:true,
-      maxResults: 100, // Maximum number of results per request
-      ...(nextPageToken && { pageToken: nextPageToken })
-    },
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
 
-  if (!response.data || !response.data.items) {
-    console.error("Invalid YouTube API response:", response.data);
-    return { error: "No subscription data found." };
+  try {
+    // Loop to fetch all pages, but stop once we have enough subscriptions
+    do {
+      const response = await axios.get("https://www.googleapis.com/youtube/v3/subscriptions", {
+        params: {
+          part: "snippet,contentDetails",
+          mine: true,
+          maxResults: 50, // Fetch up to 50 subscriptions per page
+          pageToken: nextPageToken || "", // If nextPageToken exists, pass it, else leave empty string
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Ensure token is passed in headers
+        }
+      });
+
+      // Add the subscriptions from the current page to the array
+      allSubscriptions = allSubscriptions.concat(response.data.items);
+
+      // If we've reached the desired number of subscriptions, stop fetching more
+      if (allSubscriptions.length >= maxSubscriptions) {
+        allSubscriptions = allSubscriptions.slice(0, maxSubscriptions); // Limit to 200 subscriptions
+        break;
+      }
+
+      // Get the nextPageToken for the next iteration, if any
+      nextPageToken = response.data.nextPageToken;
+
+    } while (nextPageToken); // Continue fetching until no nextPageToken is returned
+
+    return allSubscriptions;
+
+  } catch (error) {
+    console.error("Error fetching subscriptions:", error);
+    return { error: "Failed to fetch subscriptions." };
   }
+};
 
-  console.log("YouTube API Response:", response.data);
-
-  allSubscriptions = [...allSubscriptions, ...response.data.items];
-
-  nextPageToken = response.data.nextPageToken;
-  
-  return allSubscriptions;
- 
-
-  
-} catch (error) {
-  console.error("Error fetching subscriptions:", error);
-  return console.error("Full Error Object:", error);
-
-}
-}
 // Function to get YouTube channel data using access token
 const getYouTubeChannelData = async (accessToken) => {
   try {
@@ -348,6 +378,7 @@ exports.profileController = async(req,res,next)=>{
       accessToken:user.accessToken || "",
       youtube: user.youtube, // YouTube channel data
       subscriptions: user.subscriptions,
+      watchHistory: user.watchHistory,
     });
   } catch (error) {
     res.status(500).send("Server Error");
@@ -532,5 +563,49 @@ const getCommentDetails = async (commentId, accessToken) => {
   } catch (error) {
     console.error("Error fetching comment details:", error.response ? error.response.data : error.message);
     throw error;
+  }
+};
+exports.fetchWatchHistory = async (accessToken) => {
+  let allHistory = [];
+  let nextPageToken = "";
+
+  console.log("Access Token is here", accessToken);
+  if (!accessToken) {
+    console.error("No token found.");
+    return { error: "Access token is required." };
+  }
+
+  try {
+    let response = await axios.get("https://www.googleapis.com/youtube/v3/videos", {
+      params: {
+        part: "snippet,contentDetails,statistics",
+        myRating: 'like', // Fetch the authenticated user's activities
+        maxResults: 50, // Maximum number of results per request
+        ...(nextPageToken && { pageToken: nextPageToken }), // Pagination if necessary
+         // Filter to only get watch history
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.data || !response.data.items) {
+      console.error("Invalid YouTube API response:", response.data);
+      return { error: "No watch history found." };
+    }
+
+    console.log("YouTube API Response:", response.data);
+
+    // Add the fetched activities to the history array
+    allHistory = [...allHistory, ...response.data.items];
+
+    // Check if there's a next page token for pagination
+    nextPageToken = response.data.nextPageToken;
+
+    return allHistory;
+  
+  } catch (error) {
+    console.error("Error fetching watch history:", error);
+    return { error: "Error fetching watch history." };
   }
 };

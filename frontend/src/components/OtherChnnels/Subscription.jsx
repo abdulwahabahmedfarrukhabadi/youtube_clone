@@ -10,11 +10,13 @@ const Subscription = () => {
   const { loading, setLoading } = useAppContext();
   const [channelDetails, setChannelDetails] = useState([]);
   const [SubscribedStatus, setSubscribedStatus] = useState(false);
-
+  
   // Fetch subscriptions from localStorage
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("user-info")) || {};
     const storedSubscriptions = userInfo.youtube?.subscriptions || [];
+    console.log(storedSubscriptions); // Add this line to check the structure
+
     setSubscriptions(storedSubscriptions);
   }, []);
    
@@ -31,12 +33,26 @@ const Subscription = () => {
     const channelIds = subscriptions.map((sub) => sub.snippet.channelId).join(",");
     if (channelIds) {
       setLoading(true);
+      let allChannels = [];
+      let nextPageToken = null;
       try {
+        do{
         const data = await fetchApiFromYoutubeData("channels", {
           part: "snippet,statistics,brandingSettings",
           id: channelIds,
+          maxResults: 50, // Ensure max 50 per request
+          pageToken: nextPageToken,
+          
         });
-        setChannelDetails(data.items);
+        if (data && data.items) {
+          allChannels = allChannels.concat(data.items);
+        } else {
+          console.error("No 'items' found in response:", data);
+          break;
+        }
+        nextPageToken = data.nextPageToken; // Update next page token
+      } while (nextPageToken);
+      setChannelDetails(allChannels);        
       } catch (error) {
         console.error("Error fetching multiple channel details:", error);
       } finally {
@@ -57,7 +73,7 @@ const Subscription = () => {
       [channelId]: !prevStatus[channelId],
     }));
   };
-
+   console.log(channelDetails);
   return (
     <div className="min-h-screen bg-gray-100 p-2">
       <h1 className="text-xl font-bold mb-5 text-gray-800">Subscriptions</h1>

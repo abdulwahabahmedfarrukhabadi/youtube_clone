@@ -10,6 +10,8 @@ import Channel from "./components/Channel/channel";
 import Playlist from "./components/Channel/Playlist";
 import YouTubeShorts from "./components/VideoSection/ShortDetails";
 import Subscription from "./components/OtherChnnels/Subscription";
+import History from "./components/History/history";
+import LikedVideos from "./components/LikedVideos/likedVideos";
 function App() {
     
   return(
@@ -29,6 +31,8 @@ function App() {
    <Route path="/playlist/:playlistId" element={<Playlist />} />
    <Route path="/shorts/:category/:videoId" element={<YouTubeShorts />} />
    <Route path="/subscriptions" element={<Subscription/>}/>
+   <Route path="/history" element={<History/>}/>
+   <Route path="/likedVideos" element={<LikedVideos/>}/>
    </Routes>
  </div>
  </ThemeProvider>
