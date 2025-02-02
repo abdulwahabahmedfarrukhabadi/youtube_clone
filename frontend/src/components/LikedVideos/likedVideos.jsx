@@ -7,14 +7,14 @@ const LikedVideos = () => {
   const userInfo = JSON.parse(localStorage.getItem("user-info"));
   const likedVideos = userInfo?.watchHistory || [];
   const [gradient, setGradient] = useState("");
-
+  const REACT_BASE_URL = import.meta.env.REACT_BASE_URL;
   // Fetch Thumbnail Gradient for the First Video
   useEffect(() => {
     const fetchGradient = async () => {
       if (likedVideos.length > 0 && likedVideos[0]?.thumbnailUrl) {
         try {
           const { data: colorData } = await axios.get(
-            `http://localhost:5000/thumbnail-color?imageUrl=${encodeURIComponent(
+            `${REACT_BASE_URL}/thumbnail-color?imageUrl=${encodeURIComponent(
               likedVideos[0].thumbnailUrl
             )}`
           );

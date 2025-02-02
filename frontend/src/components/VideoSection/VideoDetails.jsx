@@ -37,6 +37,7 @@ const VideoDetails = () => {
   console.log(accessToken);
    
   
+  const REACT_BASE_URL = import.meta.env.REACT_BASE_URL;
 
   useEffect(() => {
     // Fetch the video details and set the initial like/dislike counts
@@ -60,7 +61,7 @@ const VideoDetails = () => {
 
     try {
       // API call to update like/dislike status on the server
-      const response = await api.post(`http://localhost:5000/video/${videoId}/like`, 
+      const response = await api.post(`${REACT_BASE_URL}/video/${videoId}/like`, 
       { videoId,
         accessToken,
       });
@@ -92,7 +93,7 @@ const VideoDetails = () => {
 
     try {
       // API call to update like/dislike status on the server
-     const response = await api.post(`http://localhost:5000/video/${videoId}/dislike`, {
+     const response = await api.post(`${REACT_BASE_URL}/video/${videoId}/dislike`, {
       videoId: videoId,           // Send videoId
       accessToken: accessToken,   // Send accessToken
     });
@@ -148,7 +149,7 @@ function stringifySafely(obj) {
     }
      
       const response = await axios.post(
-        "http://localhost:5000/comment",
+        `${REACT_BASE_URL}/comment`,
         {
           videoId:videoId,
           commentText:commentText,
