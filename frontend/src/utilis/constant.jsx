@@ -1,22 +1,25 @@
-import {Home,Subscriptions,Settings,} from "@mui/icons-material"
+import {Home,Subscriptions,Settings,History,PlaylistPlay,SmartDisplay,Schedule, ThumbUpOutlined} from "@mui/icons-material"
 import {  AiOutlineFlag } from "react-icons/ai";
-import { MdScience, MdSchool, MdFlight, MdLibraryBooks, } from "react-icons/md";
-import { CgMusicNote } from "react-icons/cg";
+import { MdScience, MdSchool, MdLibraryBooks, } from "react-icons/md";
 import {  FiHelpCircle } from "react-icons/fi";
-import { IoGameControllerSharp, IoCarSport } from "react-icons/io5";
-import { GiCat, GiSoccerBall } from "react-icons/gi";
+import { SiYoutubeshorts } from "react-icons/si";
 import { FaUserFriends, FaRegLaughBeam, FaTheaterMasks, FaTools } from "react-icons/fa";
 import {  RiFeedbackLine } from "react-icons/ri";
 
-export const categories = [
+export const categories1 = [
     { id: "0", name: "Home", icon: <Home />, type: "category" },
-    { id: "1", name: "Subscription", icon: <Subscriptions />,link:"/subscriptions" },
-    { id: "2", name: "Autos & Vehicles", icon: <IoCarSport />, type: "category" },
-    { id: "10", name: "Music", icon: <CgMusicNote />, type: "category" },
-    { id: "15", name: "Pets & Animals", icon: <GiCat />, type: "category" },
-    { id: "17", name: "Sports", icon: <GiSoccerBall />, type: "category" },
-    { id: "19", name: "Travel & Events", icon: <MdFlight />, type: "category" },
-    { id: "20", name: "Gaming", icon: <IoGameControllerSharp />, type: "category" },
+    { id: "1", name: "Shorts", icon: <SiYoutubeshorts />, type: "category" },
+    { id: "2", name: "Subscription", icon: <Subscriptions />,link:"/subscriptions" },
+    ]
+    
+  export const categories2 = [
+    { id: "10", name: "History", icon: <History />, type: "category" },
+    { id: "15", name: "Playlists", icon: <PlaylistPlay />, type: "category" },
+    { id: "17", name: "My Videos", icon: <SmartDisplay/>, type: "category" },
+    { id: "19", name: "Watch Later", icon: <Schedule />, type: "category" },
+    { id: "20", name: "Liked Videos", icon: <ThumbUpOutlined />, type: "category" },
+    ]
+  export const categories3=[
     { id: "22", name: "People & Blogs", icon: <FaUserFriends />, type: "category" },
     { id: "23", name: "Comedy", icon: <FaRegLaughBeam />, type: "category" },
     { id: "24", name: "Entertainment", icon: <FaTheaterMasks />, type: "category", divider: true },

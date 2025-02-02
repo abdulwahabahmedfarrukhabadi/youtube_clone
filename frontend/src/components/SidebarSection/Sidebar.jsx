@@ -1,10 +1,10 @@
 // Sidebar.jsx
 import { useAppContext } from "../../useContextHook/useContextApi";
 import { useTheme } from "../../useContextHook/useTheme";
-import { categories, menuItems } from "../../utilis/constant";
+import { categories1, categories2, categories3, menuItems } from "../../utilis/constant";
 import MenuItem from "./MenuItem";
 import { useNavigate } from "react-router-dom";
-import {Home,Search,Notifications,AccountCircle,Settings,VideoLibrary} from "@mui/icons-material"
+import {Home,Search,Notifications,AccountCircle,Settings,VideoLibrary,ChevronRight} from "@mui/icons-material"
 const Sidebar = () => {
   const { mobileMenu, selectedCategory, setSelectedCategory } = useAppContext();
   const { isDarkMode } = useTheme();
@@ -49,8 +49,8 @@ const Sidebar = () => {
             </button>
           </div>
         </div>
-        <div className="flex flex-col px-0 mb-20">
-        {categories.map((item) => (
+        <div className="flex flex-col px-0 mb-20 text-black">
+        {categories1.map((item) => (
           <MenuItem
             key={item.id}
             item={item}
@@ -59,6 +59,31 @@ const Sidebar = () => {
           />
         ))}
         <hr
+          className={`my-3 ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}
+        />
+        <div className="text-black font-bold flex items-center">
+        <span>You</span><ChevronRight/>
+        </div>
+        {categories2.map((item) => (
+          <MenuItem
+            key={item.id}
+            item={item}
+            isSelected={item.id === selectedCategory}
+            onClick={() => handleCategoryClick(item.id, item.name)}
+          />
+        ))}
+         <hr
+          className={`my-3 ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}
+        />
+        {categories3.map((item) => (
+          <MenuItem
+            key={item.id}
+            item={item}
+            isSelected={item.id === selectedCategory}
+            onClick={() => handleCategoryClick(item.id, item.name)}
+          />
+        ))}
+                 <hr
           className={`my-3 ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}
         />
 
