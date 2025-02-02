@@ -10,7 +10,7 @@ const PlaylistPage = () => {
   const [loading, setLoading] = useState(true);
   const [gradient, setGradient] = useState(""); 
   const [currentVideo, setCurrentVideo] = useState(null); // State to track the currently playing video
-
+  const REACT_BASE_URL = import.meta.env.REACT_BASE_URL;
   // Fetch playlist data
   useEffect(() => {
     const getPlaylistData = async () => {
@@ -23,7 +23,7 @@ const PlaylistPage = () => {
         const thumbnailUrl = data?.items[0]?.snippet?.thumbnails?.high?.url;
         if (thumbnailUrl) {
           const { data: colorData } = await axios.get(
-            `http://localhost:5000/thumbnail-color?imageUrl=${encodeURIComponent(
+            `${REACT_BASE_URL}/thumbnail-color?imageUrl=${encodeURIComponent(
               thumbnailUrl
             )}`
           );

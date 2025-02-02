@@ -1,9 +1,9 @@
 import axios from "axios";
-
 // Initialize Axios instance
+const REACT_BASE_URL = import.meta.env.REACT_BASE_URL;
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // Replace with your base API URL
-  withCredentials: true, // Include cookies if refresh token is stored in cookies
+    withCredentials: true, // Include cookies if refresh token is stored in cookies
 });
 
 // Helper function to get the `accessToken` from user-info
@@ -38,7 +38,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
     // Check if the error is due to an expired access token
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -46,7 +45,7 @@ api.interceptors.response.use(
       try {
         // Call the refresh token endpoint
         const response = await axios.post(
-          "http://localhost:5000/refresh-token", // Refresh token endpoint
+          `${REACT_BASE_URL}/refresh-token`, // Refresh token endpoint
           {},
           { withCredentials: true } // Include refresh token in the request
         );
