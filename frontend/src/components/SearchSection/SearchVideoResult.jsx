@@ -67,15 +67,15 @@ const SearchVideoResult = () => {
   }, [searchQuery]);
 
   return (
-    <div className="flex w-full h-full">
+    <div className="flex flex-row h-screen overflow-hidden">
       {/* Sidebar */}
-      <div className="flex-shrink-0 overflow-y-auto">
+      <div className="flex-shrink-0 ">
         <Sidebar />
       </div>
 
       {/* Main Content */}
       <div
-        className={`flex-grow overflow-y-auto ${isDarkMode ? "bg-gray-900 text-gray-300" : "bg-white text-gray-800"}`}
+        className={`flex-grow overflow-y-auto hidden-scrollbar ${isDarkMode ? "bg-gray-900 text-gray-300" : "bg-white text-gray-800"}`}
       >
         {/* Show loading spinner only when data is being fetched */}
         {loading ? (

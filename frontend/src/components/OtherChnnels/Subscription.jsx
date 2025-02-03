@@ -4,6 +4,7 @@ import { fetchApiFromYoutubeData } from "../../utilis/fetchApi";
 import { formatViewCount } from "../../utilis/helper";
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../LoadingSpinner";
+import Sidebar from "../SidebarSection/Sidebar";
 
 const Subscription = () => {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -75,9 +76,13 @@ const Subscription = () => {
   };
    console.log(channelDetails);
   return (
-    <div className="min-h-screen bg-gray-100 p-2">
+    <div className="flex flex-row h-screen hide-scrollbar">
+      <div className="flex-shrink-0 h-full hide-scrollbar">
+        <Sidebar />
+      </div>
+      <div className="w-full grow overflow-y-auto bg-gray-100 p-2 hide-scrollbar">
       <h1 className="text-xl font-bold mb-5 text-gray-800">Subscriptions</h1>
-
+      
       {/* Show the Loading Spinner only if loading is true */}
       {loading ? <LoadingSpinner /> : (
         <>
@@ -97,14 +102,19 @@ const Subscription = () => {
                       <h3 className="text-base font-bold text-gray-800">
                         {channelDetail.snippet.title}
                       </h3>
-                      <p className="text-sm font-semibold text-gray-600">
+                      <p className="text-xs font-semibold text-gray-600">
                         {channelDetail.snippet.customUrl}{" . "}
                         {formatViewCount(channelDetail?.statistics?.subscriberCount)}{" "}subscribers
                       </p>
                       <p className="text-xs font-semibold text-gray-600">
-                        {channelDetail?.snippet?.description}
-                      </p>
-                      <div className="flex-2 text-xs pt-3">
+  {channelDetail?.snippet?.description
+    ?.split(" ")
+    .slice(0, 30)
+    .join(" ")}
+  {channelDetail?.snippet?.description?.split(" ").length > 30 ? "..." : ""}
+</p>
+
+                      <div className="flex-2 text-xs pt-2">
                         <button
                           onClick={() => toggleSubscription(channelDetail.id)}
                           className={`font-bold px-3 py-2 lg:py-3 mt-2 lg:mt-0 ml-1 lg:ml-6 rounded-full  
@@ -126,6 +136,7 @@ const Subscription = () => {
           )}
         </>
       )}
+    </div>
     </div>
   );
 };

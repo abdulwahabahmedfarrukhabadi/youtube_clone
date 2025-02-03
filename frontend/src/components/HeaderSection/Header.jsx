@@ -18,7 +18,7 @@ import { LuCircleDollarSign,LuContact } from "react-icons/lu";
 import mobileLogo from "../../assets/youtube_mobile.png";
 import useSpeechRecognitions from '../../useContextHook/useSpeechRecoginition';
 import { IoSettingsSharp } from "react-icons/io5";
-import { Menu} from '@mui/icons-material'
+import { Menu,ChevronRight} from '@mui/icons-material'
 
 const Header = () => {
   
@@ -239,17 +239,22 @@ const Header = () => {
                 </div>
                 </div>
                 <hr className="border-t border-gray-300 my-2" />
+                <Link to={"https://myaccount.google.com/u/0/?utm_source=YouTubeWeb&tab=rk&utm_medium=act&gar=WzgwLCIyMzMzODciXQ&tab=rk&hl=en-GB&pli=1"}>
                 
                 <button className="flex items-center gap-2 w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
                 >
                   <FaGoogle className='text-lg'/>
                 <span className='text-base font-medium'>Google Account</span>
+               
                 </button>
-                
+                </Link>
                 <button className="flex items-center gap-2 w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-                >
+                > 
+                  
                   <MdSwitchAccount className='text-lg'/>
+                  
                 <span className='text-base font-medium'>Switch Account</span>
+                <ChevronRight/>
                 </button>
                  
                 <button onClick={handleSignOut} className="flex items-center gap-2 w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"

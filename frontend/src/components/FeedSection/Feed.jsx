@@ -46,13 +46,13 @@ const Feed = () => {
   };
 
   return (
-    <div className={`flex flex-row h-screen ${isDarkMode ? "bg-gray-900 text-gray-300" : "bg-white text-gray-800"}`}>
+    <div className={`flex flex-row h-screen overflow-hidden ${isDarkMode ? "bg-gray-900 text-gray-300" : "bg-white text-gray-800"}`}>
       
       {/* Sidebar Component */}
       <Sidebar />
       
       {/* Main Content */}
-      <div className="w-full grow overflow-y-auto">
+      <div className="w-full grow overflow-y-auto hide-scrollbar">
         
         {/* Categories Section */}
         <div className="flex space-x-5 p-4 overflow-x-auto border-b border-gray-300">

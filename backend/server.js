@@ -35,7 +35,7 @@ connectDB();
 
 // Middleware
 const corsOptions = {
-  origin: "http://localhost:5173", // Allow frontend URL
+  origin: process.env.FRONTEND_URL, // Allow frontend URL
   methods: "GET,POST",
   credentials: true,
   allowedHeaders: "Content-Type,Authorization",
