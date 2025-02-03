@@ -5,7 +5,7 @@ import axios from "axios";
 
 const LikedVideos = () => {
   const userInfo = JSON.parse(localStorage.getItem("user-info"));
-  const likedVideos = userInfo?.watchHistory || [];
+  const likedVideos = userInfo?.likedVideos || [];
   const [gradient, setGradient] = useState("");
   const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
   // Fetch Thumbnail Gradient for the First Video

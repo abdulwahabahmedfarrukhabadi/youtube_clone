@@ -7,7 +7,6 @@ const cors = require("cors"); // Enable CORS for cross-origin requests
 const session = require("express-session");
 const { Vibrant } = require("node-vibrant/node");
 const { GoogleProvider, likeVideo, dislikeVideo,likeComment,dislikeComment,postComment, getRefreshedToken } = require("./utilis/googleStrategy");
-const fs = require("fs");
 const axios = require("axios");
 const MongoStore = require('connect-mongo');
 const cloudinary = require('cloudinary').v2;
@@ -29,6 +28,7 @@ app.use(
     }),
   })
 );
+console.log(process.env.CLOUD_API_KEY); // Test if it's correctly loaded
 
 // Connect to MongoDB
 connectDB();
@@ -50,9 +50,9 @@ app.use(express.json()); // Parse JSON request bodies
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
+  api_secret: process.env.CLOUD_API_SECRET
 });
-
+console.log("Cloud Key",process.env.CLOUD_API_KEY);
 // Thumbnail color extraction API
 app.get("/thumbnail-color", async (req, res) => {
   const imageUrl = req.query.imageUrl; // Get image URL from query parameter

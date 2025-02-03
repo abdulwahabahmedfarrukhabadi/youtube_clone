@@ -63,7 +63,7 @@ const userSchema = new mongoose.Schema({
   },
 
   // New watchHistory field added here
-  watchHistory: [
+  likedVideos: [
     {
       videoId: {
         type: String,

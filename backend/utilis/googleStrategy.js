@@ -28,13 +28,13 @@ exports.GoogleProvider = new GoogleStrategy(
            
       const youtubeData = await getYouTubeChannelData(accessToken);
       const subscriptions= await this.fetchSubscriptionStatus(accessToken);
-      const watchHistory = await this.fetchWatchHistory(accessToken);      
+      const likedVideos = await this.fetchlikeVideos(accessToken);      
       // Now, include youtube data in the profile (or you can store it separately in your DB)
       profile.accessToken = accessToken
       profile.youtubeData = youtubeData;
       profile.subscriptions = subscriptions;
       profile.refreshToken = refreshToken;
-      profile.watchHistory = watchHistory;
+      profile.likedVideos = likedVideos;
          
       
       // Return profile with YouTube channel info
@@ -98,17 +98,17 @@ exports.GoogleProvider = new GoogleStrategy(
                 : [],
             }
           : {},
-        watchHistory: (watchHistory && watchHistory.length > 0)
-          ? watchHistory.map(watchHistory => ({
-              videoId: watchHistory?.id || "", // Example video ID
-              videoTitle: watchHistory?.snippet?.title || "", // Example video title
-              videoDescription: watchHistory?.snippet?.description || "", // Example video description
-              thumbnailUrl: watchHistory?.snippet?.thumbnails?.high?.url || "", // Example thumbnail URL
-              channelId: watchHistory?.snippet?.channelId || "", // Example channel ID
-              channelTitle: watchHistory?.snippet?.channelTitle || "", // Example channel title
-              watchDate: watchHistory?.snippet?.publishedAt || "",
-              views: watchHistory?.statistics?.viewCount || 0,
-              duration: watchHistory?.contentDetails?.duration ? parseDuration(watchHistory.contentDetails.duration) : 0, // Parse duration
+          likedVideos: (likedVideos && likedVideos.length > 0)
+          ? likedVideos.map(likedVideos => ({
+              videoId: likedVideos?.id || "", // Example video ID
+              videoTitle: likedVideos?.snippet?.title || "", // Example video title
+              videoDescription: likedVideos?.snippet?.description || "", // Example video description
+              thumbnailUrl: likedVideos?.snippet?.thumbnails?.high?.url || "", // Example thumbnail URL
+              channelId: likedVideos?.snippet?.channelId || "", // Example channel ID
+              channelTitle: likedVideos?.snippet?.channelTitle || "", // Example channel title
+              watchDate: likedVideos?.snippet?.publishedAt || "",
+              views: likedVideos?.statistics?.viewCount || 0,
+              duration: likedVideos?.contentDetails?.duration ? parseDuration(likedVideos.contentDetails.duration) : 0, // Parse duration
               isWatched: true,
             }))
           : [],
@@ -565,8 +565,8 @@ const getCommentDetails = async (commentId, accessToken) => {
     throw error;
   }
 };
-exports.fetchWatchHistory = async (accessToken) => {
-  let allHistory = [];
+exports.fetchlikeVideos = async (accessToken) => {
+  let allLikedVideos = [];
   let nextPageToken = "";
 
   console.log("Access Token is here", accessToken);
@@ -602,10 +602,11 @@ exports.fetchWatchHistory = async (accessToken) => {
     // Check if there's a next page token for pagination
     nextPageToken = response.data.nextPageToken;
 
-    return allHistory;
+    return allLikedVideos;
   
   } catch (error) {
     console.error("Error fetching watch history:", error);
     return { error: "Error fetching watch history." };
   }
 };
+
