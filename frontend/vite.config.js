@@ -7,7 +7,5 @@ export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
     include: ['regenerator-runtime']
-  },
- },
-  
-)
+  }
+ })
