@@ -10,6 +10,7 @@ const { GoogleProvider, likeVideo, dislikeVideo,likeComment,dislikeComment,postC
 const fs = require("fs");
 const axios = require("axios");
 const MongoStore = require('connect-mongo');
+const cloudinary = require('cloudinary').v2;
 dotenv.config(); // Load environment variables
 
 const app = express();
@@ -44,6 +45,14 @@ app.use(express.json()); // Parse JSON request bodies
 
 // Root route
 
+
+// Set up Cloudinary credentials
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
 // Thumbnail color extraction API
 app.get("/thumbnail-color", async (req, res) => {
   const imageUrl = req.query.imageUrl; // Get image URL from query parameter
@@ -58,35 +67,42 @@ app.get("/thumbnail-color", async (req, res) => {
     const imageBuffer = Buffer.from(response.data);
 
     // Save the image temporarily for processing
-    const tempFilePath = "./temp-image.jpg";
-    fs.writeFileSync(tempFilePath, imageBuffer);
+    const uploadResponse = await cloudinary.uploader.upload_stream(
+      { resource_type: 'auto' }, // Automatically detect image type (jpg, png, etc.)
+      (error, result) => {
+        if (error) {
+          return res.status(500).json({ error: "Error uploading image to Cloudinary." });
+        }
 
+        const uploadedImageUrl = result.secure_url;
     // Extract color palette using Vibrant
-    const palette = await Vibrant.from(tempFilePath).getPalette();
+    Vibrant.from(uploadedImageUrl).getPalette()
+    .then(palette => {
+      // Fallback for colors if Vibrant swatch is not available
+      const vibrantColor = palette.Vibrant
+        ? `rgb(${palette.Vibrant.rgb.join(", ")})`
+        : palette.DarkVibrant
+        ? `rgb(${palette.DarkVibrant.rgb.join(", ")})`
+        : null;
 
-    // Clean up temporary file
-    if (fs.existsSync(tempFilePath)) {
-      fs.unlinkSync(tempFilePath);
-    }
-
-    // Fallback for colors if Vibrant swatch is not available
-    const vibrantColor = palette.Vibrant
-      ? `rgb(${palette.Vibrant.rgb.join(", ")})`
-      : palette.DarkVibrant
-      ? `rgb(${palette.DarkVibrant.rgb.join(", ")})`
-      : null;
-
-    if (vibrantColor) {
-      // Generate a gradient using the extracted vibrant color
+      if (vibrantColor) {      // Generate a gradient using the extracted vibrant color
       const gradient = generateGradient(palette.Vibrant.rgb);
-      return res.json({ gradient });
+      return res.json({ gradient,imageUrl:uploadedImageUrl });
     } else {
       return res.status(404).json({ error: "No vibrant color found" });
     }
-  } catch (error) {
+      })
+   .catch (error=> {
     console.error("Error fetching or processing thumbnail:", error.message);
     res.status(500).json({ error: "Error processing image." });
-  }
+  });
+}
+    );
+ uploadResponse.end(imageBuffer);
+} catch (error) {
+  console.error("Error fetching or processing thumbnail:", error.message);
+  res.status(500).json({ error: "Error processing image." });
+}
 });
 
 // Gradient generation function
