@@ -378,7 +378,7 @@ exports.profileController = async(req,res,next)=>{
       accessToken:user.accessToken || "",
       youtube: user.youtube, // YouTube channel data
       subscriptions: user.subscriptions,
-      watchHistory: user.watchHistory,
+      likedVideos: user.likedVideos,
     });
   } catch (error) {
     res.status(500).send("Server Error");
@@ -597,7 +597,7 @@ exports.fetchlikeVideos = async (accessToken) => {
     console.log("YouTube API Response:", response.data);
 
     // Add the fetched activities to the history array
-    allHistory = [...allHistory, ...response.data.items];
+    allLikedVideos = [...allLikedVideos, ...response.data.items];
 
     // Check if there's a next page token for pagination
     nextPageToken = response.data.nextPageToken;
