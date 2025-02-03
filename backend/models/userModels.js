@@ -104,6 +104,47 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
+  WatchLater: [
+    {
+      videoId: {
+        type: String,
+        
+        unique: true, // Ensure no duplicate entries for the same video
+      },
+      videoTitle: {
+        type: String,
+      },
+      videoDescription: {
+        type: String,
+        default: "", // Optional description
+      },
+      thumbnailUrl: {
+        type: String,
+        default: "", // Optional URL for the video thumbnail
+      },
+      channelId: {
+        type: String,
+      },
+      channelTitle: {
+        type: String,
+      },
+      watchDate: {
+        type: Date,
+        default: Date.now, // Set current time when the video is watched
+      },
+      views: {
+        type: Number
+         // Set current time when the video is watched
+      },
+      duration: {
+        type: Number, // Duration in seconds (optional)
+      },
+      isWatched: {
+        type: Boolean,
+        default: true, // Mark as watched
+      },
+    },
+  ],
 
   storage: {
     files: Array,

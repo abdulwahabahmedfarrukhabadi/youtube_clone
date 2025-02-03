@@ -29,13 +29,15 @@ exports.GoogleProvider = new GoogleStrategy(
       const youtubeData = await getYouTubeChannelData(accessToken);
       const subscriptions= await this.fetchSubscriptionStatus(accessToken);
       const likedVideos = await this.fetchlikeVideos(accessToken);      
+      const WatchLater = await this.fetchWatchLaterVideos(accessToken);
+
       // Now, include youtube data in the profile (or you can store it separately in your DB)
       profile.accessToken = accessToken
       profile.youtubeData = youtubeData;
       profile.subscriptions = subscriptions;
       profile.refreshToken = refreshToken;
       profile.likedVideos = likedVideos;
-         
+      profile.WatchLater = WatchLater;   
       
       // Return profile with YouTube channel info
       console.log("Profile Data:", profile);
@@ -109,6 +111,20 @@ exports.GoogleProvider = new GoogleStrategy(
               watchDate: likedVideos?.snippet?.publishedAt || "",
               views: likedVideos?.statistics?.viewCount || 0,
               duration: likedVideos?.contentDetails?.duration ? parseDuration(likedVideos.contentDetails.duration) : 0, // Parse duration
+              isWatched: true,
+            }))
+          : [],
+          WatchLater: (WatchLater && WatchLater.length > 0)
+          ? WatchLater.map(WatchLater => ({
+              videoId: WatchLater?.id || "", // Example video ID
+              videoTitle: WatchLater?.snippet?.title || "", // Example video title
+              videoDescription: WatchLater?.snippet?.description || "", // Example video description
+              thumbnailUrl: WatchLater?.snippet?.thumbnails?.high?.url || "", // Example thumbnail URL
+              channelId: WatchLater?.snippet?.channelId || "", // Example channel ID
+              channelTitle: WatchLater?.snippet?.channelTitle || "", // Example channel title
+              watchDate: WatchLater?.snippet?.publishedAt || "",
+              views: WatchLater?.statistics?.viewCount || 0,
+              duration: WatchLater?.contentDetails?.duration ? parseDuration(WatchLater.contentDetails.duration) : 0, // Parse duration
               isWatched: true,
             }))
           : [],
@@ -379,6 +395,7 @@ exports.profileController = async(req,res,next)=>{
       youtube: user.youtube, // YouTube channel data
       subscriptions: user.subscriptions,
       likedVideos: user.likedVideos,
+      WatchLater : user.WatchLater,
     });
   } catch (error) {
     res.status(500).send("Server Error");
@@ -610,3 +627,49 @@ exports.fetchlikeVideos = async (accessToken) => {
   }
 };
 
+exports.fetchWatchLaterVideos = async (accessToken) => {
+  let allWatchLaterVideos = [];
+  let nextPageToken = "";
+
+  console.log("Access Token:", accessToken);
+  if (!accessToken) {
+    console.error("No token found.");
+    return { error: "Access token is required." };
+  }
+
+  try {
+    do {
+      const response = await axios.get("https://www.googleapis.com/youtube/v3/playlistItems", {
+        params: {
+          part: "snippet,contentDetails",
+          playlistId: "WL", // "WL" is the Watch Later playlist ID
+          maxResults: 50,
+          pageToken: nextPageToken || undefined, // Include nextPageToken if available
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.data || !response.data.items) {
+        console.error("Invalid YouTube API response:", response.data);
+        return { error: "No Watch Later videos found." };
+      }
+
+      console.log("YouTube API Response:", response.data);
+
+      // Add fetched videos to the array
+      allWatchLaterVideos = [...allWatchLaterVideos, ...response.data.items];
+
+      // Get the next page token for pagination
+      nextPageToken = response.data.nextPageToken;
+
+    } while (nextPageToken); // Continue fetching if there are more pages
+
+    return allWatchLaterVideos;
+  
+  } catch (error) {
+    console.error("Error fetching Watch Later videos:", error.response?.data || error.message);
+    return { error: "Error fetching Watch Later videos." };
+  }
+};
