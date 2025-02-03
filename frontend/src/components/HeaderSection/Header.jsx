@@ -131,10 +131,10 @@ const Header = () => {
 
 
   return (
-    <div className={`sticky top-0 z-10 flex flex-row items-center justify-between h-14 shadow-lg px-4 md:px-5 ${isDarkMode ? "bg-gray-900" : "bg-white"} text-${isDarkMode ? "white" : "bg-gray-700"}`}>
+    <div className={`sticky top-0 z-10 flex items-center justify-between h-14 shadow-lg px-4 md:px-5 ${isDarkMode ? "bg-gray-900" : "bg-white"} text-${isDarkMode ? "white" : "bg-gray-700"}`}>
       {loading && <Loader />}
       <div className='flex items-center space-x-10'>
-      <div className="md:block"onClick={mobileToggleMenu}>
+      <div className="text-lg cursor-pointer md:block"onClick={mobileToggleMenu}>
           {mobileMenu ? (
             <Menu className="text-lg" />
           ) : (
@@ -156,14 +156,14 @@ const Header = () => {
         </Link>
       </div>
       <div className='flex items-center group relative'>
-        <div className={`flex h-9 md:ml-10 md:pl-5 border border-gray-300 rounded-l-3xl group-focus-within:border-blue-500 md:group-focus-within:ml-5 md:group-focus-within:pl-0`}>
+        <div className={`flex h-9  md:pl-5 border border-gray-300 rounded-l-3xl group-focus-within:border-blue-500 md:group-focus-within:ml-5 md:group-focus-within:pl-0`}>
           <div className='w-10 items-center justify-center hidden group-focus-within:md:flex'>
             <IoIosSearch className='text-xl' />
           </div>
           <input
             type="text"
             placeholder="Search"
-            className={`pl-5 pr-5 text-sm bg-transparent outline-none md:pl-0 w-32 sm:w-44 md:w-64 lg:w-[500px] ${isDarkMode ? "text-white" : "text-black"}`}
+            className={`pl-5 text-sm bg-transparent outline-none md:pl-0 w-32 sm:w-44 md:w-64 lg:w-[500px] ${isDarkMode ? "text-white" : "text-black"}`}
             onChange={(e) => setQuerySearch(e.target.value)}
             onKeyUp={(e) => {
               if (e.key === "Enter") handleSearchQuery();

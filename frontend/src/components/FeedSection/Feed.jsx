@@ -20,12 +20,11 @@ const Feed = () => {
   // Skeleton loader component
   const SkeletonLoader = () => (
     <div className="flex flex-col mb-8 animate-pulse gap-10">
-      <div className="relative w-full h-60 bg-gray-300 rounded-md"></div>
-      <div className="md:ml-4 md:w-2/3">
+      <div className="relative w-full h-48 bg-gray-300 rounded-md"></div>
+      <div className="mt-2">
         <div className="w-3/4 h-6 bg-gray-300 rounded mb-2"></div>
         <div className="w-1/2 h-4 bg-gray-300 rounded mb-2"></div>
-        <div className="w-1/3 h-4 bg-gray-300 rounded mb-2"></div>
-        <div className="w-2/3 h-4 bg-gray-300 rounded mt-2"></div>
+       
       </div>
     </div>
   );
@@ -49,8 +48,9 @@ const Feed = () => {
     <div className={`flex flex-row h-screen overflow-hidden ${isDarkMode ? "bg-gray-900 text-gray-300" : "bg-white text-gray-800"}`}>
       
       {/* Sidebar Component */}
-      <Sidebar />
-      
+      <div className="flex-shrink-0 h-full overflow-y-auto hide-scrollbar">
+        <Sidebar />
+      </div>      
       {/* Main Content */}
       <div className="w-full grow overflow-y-auto hide-scrollbar">
         
