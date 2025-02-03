@@ -32,7 +32,7 @@ const Header = () => {
 
   const buttonRef = useRef(null); // Ref to the button with the profile image
   const [dropdownWidth] = useState("w-350"); // State to hold the dynamic width of the dropdown
-  const REACT_BASE_URL = import.meta.env.REACT_BASE_URL;
+  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
   useEffect(() => {
     // Set the dropdown width dynamically based on the profile button width
     if (buttonRef.current) {
@@ -69,7 +69,7 @@ const Header = () => {
 
   const fetchUserDetails = async (token) => {
     try {
-      const response = await fetch(`${REACT_BASE_URL}/auth/profile`, {
+      const response = await fetch(`${VITE_BASE_URL}/auth/profile`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -93,7 +93,7 @@ const Header = () => {
 
   const handleGoogleLogin = () => {
     // Redirect to Google OAuth consent screen (no popup, full page)
-    window.open(`${REACT_BASE_URL}/auth/google`);
+    window.open(`${VITE_BASE_URL}/auth/google`);
   };
 
   

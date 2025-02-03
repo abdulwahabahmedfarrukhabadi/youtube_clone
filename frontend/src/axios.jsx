@@ -1,6 +1,6 @@
 import axios from "axios";
 // Initialize Axios instance
-const REACT_BASE_URL = import.meta.env.REACT_BASE_URL;
+const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const api = axios.create({
     withCredentials: true, // Include cookies if refresh token is stored in cookies
@@ -45,7 +45,7 @@ api.interceptors.response.use(
       try {
         // Call the refresh token endpoint
         const response = await axios.post(
-          `${REACT_BASE_URL}/refresh-token`, // Refresh token endpoint
+          `${VITE_BASE_URL}/refresh-token`, // Refresh token endpoint
           {},
           { withCredentials: true } // Include refresh token in the request
         );

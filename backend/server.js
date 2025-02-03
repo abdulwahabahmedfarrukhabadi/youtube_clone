@@ -5,8 +5,6 @@ const authRoutes = require("./routes/authRoutes"); // Import auth routes
 const passport = require("./utilis/passport");
 const cors = require("cors"); // Enable CORS for cross-origin requests
 const session = require("express-session");
-const {RedisStore} = require("connect-redis"); // Redis session store
-const redis = require("redis");
 const { Vibrant } = require("node-vibrant/node");
 const { GoogleProvider, likeVideo, dislikeVideo,likeComment,dislikeComment,postComment, getRefreshedToken } = require("./utilis/googleStrategy");
 const fs = require("fs");
@@ -17,24 +15,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Session middleware
-const redisClient = redis.createClient({
-  url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-  password: process.env.REDIS_PASSWORD,
-   // Optional for secure Redis connection
-});
-
-redisClient.connect()
-  .then(() => console.log("✅ Connected to Redis"))
-  .catch(err => console.error("❌ Redis connection error:", err));
-
-redisClient.on("error", (err) => {
-  console.error("Redis error: ", err);
-});
-
-;
 app.use(
   session({
-    store: new RedisStore({client:redisClient}),
+    
     secret: "#$%^&*($%^&*I",
     resave: false,
     saveUninitialized: false,
