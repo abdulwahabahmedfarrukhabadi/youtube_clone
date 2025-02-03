@@ -8,8 +8,6 @@ export default defineConfig({
   optimizeDeps: {
     include: ['regenerator-runtime']
   },
- 
- 
-    },
+ },
   
 )
