@@ -9,6 +9,7 @@ const { Vibrant } = require("node-vibrant/node");
 const { GoogleProvider, likeVideo, dislikeVideo,likeComment,dislikeComment,postComment, getRefreshedToken } = require("./utilis/googleStrategy");
 const fs = require("fs");
 const axios = require("axios");
+const MongoStore = require('connect-mongo');
 dotenv.config(); // Load environment variables
 
 const app = express();
@@ -22,6 +23,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: { secure: process.env.NODE_ENV === "production" },
+    store: MongoStore.create({mongoUrl:process.env.MONGODB_URI,
+      collectionName:"sessions"
+    }),
   })
 );
 
