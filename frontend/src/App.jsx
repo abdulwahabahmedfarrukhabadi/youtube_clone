@@ -25,7 +25,7 @@ function App() {
     <Route path="/" element={<Feed/>}/>
     <Route path="/search/:searchQuery" element={<SearchVideoResult/>}/>
     <Route path="/video/:categoryId/:videoId" element={<VideoDetails/>}/>
-    <Route path="/success" element={<Success/>}/>
+    <Route path="/auth/success" element={<Success/>}/>
    <Route path={`/channel/:id`} element={<Channel />}/>
    <Route path="/playlist/:playlistId" element={<Playlist />} />
    <Route path="/shorts/:category/:videoId" element={<YouTubeShorts />} />
