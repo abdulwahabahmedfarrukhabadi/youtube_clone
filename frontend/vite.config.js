@@ -20,6 +20,16 @@ export default defineConfig({
         }
       }
     }
+  },
+  // Add logging to help troubleshoot build issues
+  logLevel: 'info',
+  onwarn(warning, warn) {
+    // Ignore certain warnings
+    if (warning.code === 'THIS_IS_UNDEFINED') {
+      return;
+    }
+    // Log other warnings
+    warn(warning);
   }
 })
 
